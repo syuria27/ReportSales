@@ -29,6 +29,7 @@ import com.syuria.android.reportsales.util.NumberTextWatcherForThousand;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -101,7 +102,9 @@ public class InputDailyReportFragment extends Fragment {
                 if (!validateRM()) {
                     return;
                 }
-                storeDailyReport(uid,input_ccm.getText().toString().trim().replace(",",""));
+                storeDailyReport(uid,
+                        input_ccm.getText().toString().trim().replace(",",""),
+                        input_rm.getText().toString().trim().replace(",",""));
             }
         });
         // Inflate the layout for this fragment
@@ -138,7 +141,7 @@ public class InputDailyReportFragment extends Fragment {
         }
     }
 
-    private void storeDailyReport(final String uid, final String ccm) {
+    private void storeDailyReport(final String uid, final String ccm, final String rm) {
         // Tag used to cancel the request
         String tag_string_req = "req_daily_report";
         pDialog = new ProgressDialog(getActivity());
@@ -174,8 +177,17 @@ public class InputDailyReportFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Daily Report Error: " + error.getMessage());
-                viewSnackBar(rootView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(rootView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         }) {
@@ -184,9 +196,9 @@ public class InputDailyReportFragment extends Fragment {
             protected Map<String, String> getParams() {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("uid", uid);
+                params.put("kode_spg", uid);
                 params.put("ccm", ccm);
-
+                params.put("rm", rm);
                 return params;
             }
 

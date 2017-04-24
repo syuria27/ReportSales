@@ -36,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -182,8 +183,18 @@ public class HistoryProductReportFragment extends Fragment implements DatePicker
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Data error: " + error.getMessage());
-                viewSnackBar(rootView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(rootView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                }
+                cardProductReport.setAdapter(null);
                 hideDialog();
             }
         });

@@ -37,6 +37,7 @@ import com.syuria.android.reportsales.util.NumberTextWatcherForThousand;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,8 +230,17 @@ public class ProductReportAdapter extends RecyclerView.Adapter<ProductReportAdap
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("", "Daily Report Error: " + error.getMessage());
-                viewSnackBar(itemView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(itemView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(itemView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(itemView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(itemView,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         }) {

@@ -36,6 +36,7 @@ import com.syuria.android.reportsales.util.NumberTextWatcherForThousand;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,8 +56,8 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
     private Context context;
     AlertDialog.Builder builder;
     View dialogView, itemView;
-    private TextInputLayout inputLayoutCCM;
-    private EditText input_ccm;
+    private TextInputLayout inputLayoutCCM, inputLayoutRM;
+    private EditText input_ccm, input_rm;
     private ProgressDialog pDialog;
 
     public DailyReportAdapter(Context context,List<DailyReport> dailyReports) {
@@ -79,6 +80,7 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
         holder.tanggal.setText(dailyReport.getTanggal());
         NumberFormat currencyFormater = NumberFormat.getCurrencyInstance(new Locale("id","id"));
         holder.ccm.setText(currencyFormater.format(dailyReport.getCcm()));
+        holder.rm.setText(currencyFormater.format(dailyReport.getRm()));
         holder.btnUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +107,7 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView kode_laporan, tanggal, ccm;
+        public TextView kode_laporan, tanggal, ccm, rm;
         public Button btnUpdate;
 
         public MyViewHolder(final View itemView) {
@@ -113,6 +115,7 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
             kode_laporan = (TextView) itemView.findViewById(R.id.textKodeLaporan);
             tanggal = (TextView) itemView.findViewById(R.id.textTanngal);
             ccm = (TextView) itemView.findViewById(R.id.textCCM);
+            rm = (TextView) itemView.findViewById(R.id.textRM);
             btnUpdate = (Button) itemView.findViewById(R.id.btnUpdate);
         }
     }
@@ -138,6 +141,11 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
         input_ccm.addTextChangedListener(new NumberTextWatcherForThousand(input_ccm,inputLayoutCCM));
         input_ccm.setText(dailyReport.getCcm().toString());
 
+        inputLayoutRM = (TextInputLayout) dialogView.findViewById(R.id.input_layout_rm);
+        input_rm = (EditText) dialogView.findViewById(R.id.input_rm);
+        input_rm.addTextChangedListener(new NumberTextWatcherForThousand(input_rm,inputLayoutRM));
+        input_rm.setText(dailyReport.getRm().toString());
+
 
         builder.setPositiveButton("UPDATE", new DialogInterface.OnClickListener() {
             @Override
@@ -157,7 +165,11 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
             public void onClick(View view) {
                 if (!validateCCM()) {return;}
 
-                updateDailyReport(dailyReport.getKode_laporan(),"",input_ccm.getText().toString().trim().replace(",",""));
+                if (!validateRM()) {return;}
+
+                updateDailyReport(dailyReport.getKode_laporan(),
+                        input_ccm.getText().toString().trim().replace(",",""),
+                        input_rm.getText().toString().trim().replace(",",""));
                 dialog.dismiss();
             }
         });
@@ -181,7 +193,18 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
         return true;
     }
 
-    private void updateDailyReport(final String kode_laporan, final String tanggal, final String ccm) {
+    private boolean validateRM() {
+        if (input_rm.getText().toString().trim().isEmpty()) {
+            inputLayoutRM.setError("CCM Must be filed");
+            return false;
+        } else {
+            inputLayoutRM.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private void updateDailyReport(final String kode_laporan, final String ccm, final String rm) {
         // Tag used to cancel the request
         String tag_string_req = "req_daily_report";
         pDialog = new ProgressDialog(context);
@@ -225,8 +248,17 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("", "Daily Report Error: " + error.getMessage());
-                viewSnackBar(itemView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(itemView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(itemView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(itemView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(itemView,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         }) {
@@ -238,6 +270,7 @@ public class DailyReportAdapter extends RecyclerView.Adapter<DailyReportAdapter.
                 params.put("kode_laporan", kode_laporan);
                 //params.put("tanggal", tanggal);
                 params.put("ccm", ccm);
+                params.put("rm", rm);
 
                 return params;
             }

@@ -44,6 +44,7 @@
             android:layout_alignParentEnd="true"/>
 
         <TextView
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="CCM"
@@ -52,11 +53,28 @@
             android:layout_below="@+id/textView2"/>
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RM"
+            android:padding="5dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView3"/>
+
+        <TextView
             android:id="@+id/textCCM"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="100.000.000"
             android:layout_below="@+id/textTanngal"
+            android:padding="5dp"
+            android:layout_toEndOf="@+id/textView1"/>
+
+        <TextView
+            android:id="@+id/textRM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100.000.000"
+            android:layout_below="@+id/textCCM"
             android:padding="5dp"
             android:layout_toEndOf="@+id/textView1"/>
 

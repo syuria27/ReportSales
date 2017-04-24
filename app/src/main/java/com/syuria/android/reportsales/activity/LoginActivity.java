@@ -31,6 +31,7 @@ import com.syuria.android.reportsales.helper.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -186,39 +187,27 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
 
-                    // Check for error node in json
-                    if (!error) {
-                        // user successfully logged in
-                        // Create login session
-                        session.setLogin(true);
+                    // user successfully logged in
+                    // Create login session
+                    session.setLogin(true);
 
-                        // Now store the user in SQLite
-                        //String kode_sales = jObj.getString("kode_sales");
+                    JSONObject sales = jObj.getJSONObject("user");
+                    String kode_spg = sales.getString("kode_spg");
+                    String nama_spg = sales.getString("nama_spg");
+                    //String email = sales.getString("email");
+                    String nama_toko = sales.getString("nama_toko");
+                    String depot = sales.getString("depot");
+                    //String created_at = saleS.getString("created_at");
 
-                        JSONObject sales = jObj.getJSONObject("user");
-                        String kode_spg = sales.getString("kode_spg");
-                        String nama_spg = sales.getString("nama_spg");
-                        //String email = sales.getString("email");
-                        String nama_toko = sales.getString("nama_toko");
-                        String depot = sales.getString("depot");
-                        //String created_at = saleS.getString("created_at");
+                    // Inserting row in users table
+                    db.addUser(nama_spg,nama_toko,depot,"",kode_spg,"");
 
-                        // Inserting row in users table
-                        db.addUser(nama_spg,nama_toko,depot,"",kode_spg,"");
-                        db.getProductServer();
+                    // Launch main activity
+                    Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(intent);
+                    finish();
 
-                        // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
-                                MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        viewSnackBar(layoutLogin,errorMsg,"DISMIS");
-                    }
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
@@ -230,8 +219,17 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Login Error: " + error.getMessage());
-                viewSnackBar(layoutLogin,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(layoutLogin,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(layoutLogin,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(layoutLogin,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(layoutLogin,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         }) {

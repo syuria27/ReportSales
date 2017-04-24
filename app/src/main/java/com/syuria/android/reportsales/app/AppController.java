@@ -19,7 +19,7 @@ public class AppController extends Application {
 
     private static AppController mInstance;
 
-    private static final int MY_SOCKET_TIMEOUT_MS = 50000;
+    private static final int MY_SOCKET_TIMEOUT_MS = 10000;
 
     @Override
     public void onCreate() {

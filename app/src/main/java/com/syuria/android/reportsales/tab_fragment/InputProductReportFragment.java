@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -222,7 +223,7 @@ public class InputProductReportFragment extends Fragment {
                             product.setId(String.valueOf(objData.getInt("id")));
                             product.setKode_product(objData.getString("kode_product"));
                             product.setNama_product(objData.getString("nama_product"));
-                            product.setFlag_fokus(String.valueOf(objData.getInt("flag_fokus")));
+                            product.setFlag_fokus(String.valueOf(objData.getInt("status")));
                             products.add(product);
                         }
                         spnProducts.setItems(products);
@@ -316,8 +317,17 @@ public class InputProductReportFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Daily Report Error: " + error.getMessage());
-                viewSnackBar(rootView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(rootView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         }) {
@@ -326,7 +336,7 @@ public class InputProductReportFragment extends Fragment {
             protected Map<String, String> getParams() {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("uid", uid);
+                params.put("kode_spg", uid);
                 params.put("products", products);
 
                 return params;

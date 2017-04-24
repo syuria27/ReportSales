@@ -11,15 +11,17 @@ public class DailyReport implements Serializable {
     String kode_laporan;
     String tanggal;
     BigDecimal ccm;
+    BigDecimal rm;
 
     public DailyReport(){
 
     }
 
-    public DailyReport(String kode_laporan,String tanggal, BigDecimal ccm) {
+    public DailyReport(String kode_laporan,String tanggal, BigDecimal ccm, BigDecimal rm) {
         this.kode_laporan = kode_laporan;
         this.tanggal = tanggal;
         this.ccm = ccm;
+        this.rm = rm;
     }
 
     public String getKode_laporan() {
@@ -44,5 +46,13 @@ public class DailyReport implements Serializable {
 
     public void setCcm(BigDecimal ccm) {
         this.ccm = ccm;
+    }
+
+    public BigDecimal getRm() {
+        return rm;
+    }
+
+    public void setRm(BigDecimal rm) {
+        this.rm = rm;
     }
 }

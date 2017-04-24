@@ -37,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -149,6 +150,7 @@ public class HistoryDailyReportFragment extends Fragment implements SimpleDatePi
                             dr.setKode_laporan(objData.getString("kode_laporan"));
                             dr.setTanggal(objData.getString("tanggal"));
                             dr.setCcm(new BigDecimal(objData.getString("ccm")));
+                            dr.setRm(new BigDecimal(objData.getString("rm")));
                             dailyReportList.add(dr);
                         }
                         viewSnackBar(rootView,errorMsg,"DISMIS");
@@ -169,8 +171,18 @@ public class HistoryDailyReportFragment extends Fragment implements SimpleDatePi
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Data error: " + error.getMessage());
-                viewSnackBar(rootView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(rootView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                }
+                lvDailyReport.setAdapter(null);
                 hideDialog();
             }
         });
