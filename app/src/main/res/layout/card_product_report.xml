@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    card_view:cardCornerRadius="5dp"
+    card_view:cardUseCompatPadding="true" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" >
+
+        <TextView
+            android:id="@+id/lblProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product :"/>
+        <TextView
+            android:id="@+id/nama_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lblProduct"
+            android:text="NIPPON PAINT PRODUCT"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_toStartOf="@+id/btnCancel" />
+
+        <TextView
+            android:id="@+id/lblVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nama_product"
+            android:text="Volume :"/>
+
+        <TextView
+            android:id="@+id/volume_product"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lblVolume"
+            android:text="2.7"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/spnProducts"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/ic_cancel_black_24dp" />
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

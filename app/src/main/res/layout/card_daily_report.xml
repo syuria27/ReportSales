@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    card_view:cardCornerRadius="5dp"
+
+    card_view:cardUseCompatPadding="true" >
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kode Laporan"
+            android:padding="5dp"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tanggal"
+            android:padding="5dp"
+            android:layout_below="@+id/textView1"
+            android:layout_alignParentStart="true"/>
+
+        <TextView
+            android:id="@+id/textTanngal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="31/12/2016"
+            android:padding="5dp"
+            android:layout_toEndOf="@+id/textView1"
+            android:layout_below="@+id/textKodeLaporan"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CCM"
+            android:padding="5dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView2"/>
+
+        <TextView
+            android:id="@+id/textCCM"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="100.000.000"
+            android:layout_below="@+id/textTanngal"
+            android:padding="5dp"
+            android:layout_toEndOf="@+id/textView1"/>
+
+        <TextView
+            android:id="@+id/textKodeLaporan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LPD-000000001"
+            android:padding="5dp"
+            android:layout_toEndOf="@+id/textView1"
+            android:layout_alignParentTop="true" />
+
+        <Button
+            android:id="@+id/btnUpdate"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_edit_black_24dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

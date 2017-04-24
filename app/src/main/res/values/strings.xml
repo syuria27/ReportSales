@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Report Sales</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+
+    <string name="nav_item_home">Home</string>
+    <string name="nav_item_friends">Friends</string>
+    <string name="nav_item_notifications">Messages</string>
+
+    <string name="nav_item_daily_report">Daily Report</string>
+    <string name="nav_item_product_report">Product Report</string>
+    <string name="nav_item_product_focus">Product Focus</string>
+
+    <!-- navigation drawer item labels  -->
+    <string-array name="nav_drawer_labels">
+        <item>@string/nav_item_daily_report</item>
+        <item>@string/nav_item_product_report</item>
+        <item>@string/nav_item_product_focus</item>
+    </string-array>
+
+    <string name="title_messages">Messages</string>
+    <string name="title_friends">Friends</string>
+    <string name="title_home">Home</string>
+
+    <string name="title_daily_report">Daily Report</string>
+    <string name="title_product_report">Product Report</string>
+    <string name="title_product_focus">Product Focus</string>
+
+    <string name="hint_password">Password</string>
+    <string name="btn_login">LOGIN</string>
+
+    <string name="err_msg_username">Username must be filed</string>
+    <string name="err_msg_password">Password must be filed</string>
+    <string name="btn_submit_product_focus">SUBMIT PRODUCT FOCUS</string>
+    <string name="btn_submit_daily_report">SUBMIT DAILY REPORT</string>
+    <string name="btn_submit_product_report">SUBMIT PRODUCT REPORT</string>
+    <string name="btn_get_daily_report">GET DAILY REPORT</string>
+    <string name="label_toko">TOKO : </string>
+    <string name="label_depot">DEPOT : </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
