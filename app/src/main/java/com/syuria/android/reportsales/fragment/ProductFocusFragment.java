@@ -25,6 +25,7 @@ import com.syuria.android.reportsales.R;
 import com.syuria.android.reportsales.adapter.ProductFocusAdapter;
 import com.syuria.android.reportsales.app.AppConfig;
 import com.syuria.android.reportsales.app.AppController;
+import com.syuria.android.reportsales.helper.SQLiteHandler;
 import com.syuria.android.reportsales.model.Product;
 import com.syuria.android.reportsales.model.ProductFocus;
 
@@ -32,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,10 +45,12 @@ import java.util.Map;
 
 public class ProductFocusFragment extends Fragment {
     private static String TAG = "ProductFocusFragment";
-    ProgressDialog pDialog;
+    private ProgressDialog pDialog;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private View rootView;
+    private SQLiteHandler db;
+    private String uid;
 
     private List<ProductFocus> productFocusList;
     private Button btnSubmit;
@@ -64,8 +68,12 @@ public class ProductFocusFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_product_focus, container, false);
-
-        getProductFocus("SPG-0046");
+        // SQLite database handler
+        db = new SQLiteHandler(getContext());
+        // Fetching user details from sqlite
+        HashMap<String, String> user = db.getUserDetails();
+        uid = user.get("uid");
+        getProductFocus(uid);
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rc_product_focus);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -107,7 +115,7 @@ public class ProductFocusFragment extends Fragment {
                         e.printStackTrace();
                     }
 
-                    storeProductFocus("SPG-0046",jsonObject.toString());
+                    storeProductFocus(uid,jsonObject.toString());
                 }else {
                     viewSnackBar(rootView,"Choose product first..","DISMIS");
                 }
@@ -142,8 +150,8 @@ public class ProductFocusFragment extends Fragment {
                             JSONObject objData = data.getJSONObject(i);
                             ProductFocus product = new ProductFocus();
                             product.setId(objData.getString("id"));
-                            product.setKode_product(objData.getString("kode_product"));
-                            product.setNama_product(objData.getString("nama_product"));
+                            product.setKode_product(objData.getString("kode_focus"));
+                            product.setNama_product(objData.getString("nama_focus"));
                             product.setFlag_fokus(objData.getString("status"));
                             product.setSelected(false);
                             productFocusList.add(product);
@@ -165,8 +173,17 @@ public class ProductFocusFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Data error: " + error.getMessage());
-                viewSnackBar(rootView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(rootView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         });
@@ -241,8 +258,17 @@ public class ProductFocusFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Daily Report Error: " + error.getMessage());
-                viewSnackBar(rootView,"Connection fail..","DISMIS");
+                try {
+                    String responseBody = new String( error.networkResponse.data, "utf-8" );
+                    JSONObject jsonObject = new JSONObject( responseBody );
+                    viewSnackBar(rootView,jsonObject.getString("error_msg"),"DISMIS");
+                } catch ( JSONException e ) {
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (UnsupportedEncodingException ue_error){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                } catch (Exception e){
+                    viewSnackBar(rootView,"Connection fail..","DISMIS");
+                }
                 hideDialog();
             }
         }) {
@@ -251,7 +277,7 @@ public class ProductFocusFragment extends Fragment {
             protected Map<String, String> getParams() {
                 // Posting params to register url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("uid", uid);
+                params.put("kode_spg", uid);
                 params.put("focuses", focuses);
 
                 return params;

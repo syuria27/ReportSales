@@ -17,7 +17,7 @@
     <string-array name="nav_drawer_labels">
         <item>@string/nav_item_daily_report</item>
         <item>@string/nav_item_product_report</item>
-        <!--<item>@string/nav_item_product_focus</item>-->
+        <item>@string/nav_item_product_focus</item>
     </string-array>
 
     <string name="title_messages">Messages</string>
